@@ -1,0 +1,95 @@
+services:
+
+  nginx:
+    image: nginx:latest
+    container_name: webte2_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/backend
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+      - react
+      - bridge
+
+  php:
+    build: ./docker/php
+    container_name: webte2_php
+    working_dir: /var/www/backend
+    volumes:
+      - ./backend:/var/www/backend
+    command: sh -c "composer install --no-interaction && php-fpm"
+    depends_on:
+      - db
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      APP_KEY: ${APP_KEY}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      API_TOKEN: ${API_TOKEN}
+      OCTAVE_BRIDGE_URL: http://bridge:3001
+      BRIDGE_SECRET: ${BRIDGE_SECRET}
+      SIMULATION_SLOWDOWN_MS: ${SIMULATION_SLOWDOWN_MS:-0}
+      STATS_COOLDOWN_MINUTES: ${STATS_COOLDOWN_MINUTES:-10}
+      FRONTEND_URL: http://nginx:80
+      CHROMIUM_PATH: /usr/bin/chromium
+
+  react:
+    image: node:20
+    container_name: webte2_react
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host"
+
+  bridge:
+    build: ./docker/bridge
+    container_name: webte2_bridge
+    working_dir: /app
+    volumes:
+      - ./octave-bridge:/app
+    command: sh -c "npm install && node src/index.js"
+    environment:
+      BRIDGE_SECRET: ${BRIDGE_SECRET}
+      SESSION_TTL_MINUTES: ${SESSION_TTL_MINUTES:-30}
+    # No ports: exposed — bridge is only reachable by php on the internal Docker network
+
+  db:
+    image: mariadb:11
+    container_name: webte2_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: webte2_phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - db
+
+volumes:
+  db_data:
