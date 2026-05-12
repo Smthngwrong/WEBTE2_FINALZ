@@ -159,9 +159,21 @@ class SimulateController extends Controller
         ];
     }
 
+    /**
+     * Read a numeric row-vector variable from the Octave session as a JSON array string.
+     *
+     * Octave 6.2.0 does not have `jsonencode`, so we serialise manually:
+     *   disp(['[' strjoin(strsplit(strtrim(num2str(VAR, 15))), ',') ']'])
+     *
+     * Using single-quoted Octave strings avoids escape-sequence issues when the
+     * command is written to Octave's stdin — no literal newlines in the command.
+     * num2str with precision 15 preserves enough significant figures for physics data.
+     * strtrim + strsplit collapse any multi-space gaps between numbers before joining.
+     */
     private function readVar(string $sessionId, string $var): string
     {
-        $res = $this->bridge->execute($sessionId, "fprintf('%s\n', jsonencode({$var}))");
+        $command = "disp(['[' strjoin(strsplit(strtrim(num2str({$var}, 15))), ',') ']'])";
+        $res = $this->bridge->execute($sessionId, $command);
         return trim($res['stdout']);
     }
 
