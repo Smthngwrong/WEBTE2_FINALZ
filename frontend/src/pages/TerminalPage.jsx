@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import CodeMirror from '@uiw/react-codemirror'
+import { octave } from '../lib/octaveLang'
 import { PageTitle } from '../components/PageTitle'
 import { apiRequest } from '../lib/api'
 import { examples } from '../lib/constants'
@@ -96,12 +98,14 @@ export function TerminalPage() {
             Session ID
             <input readOnly value={sessionId || 'nevytvorena'} />
           </label>
-          <label>
+          <label as="span">
             Octave prikaz
-            <textarea
+            <CodeMirror
               value={command}
-              onChange={(event) => setCommand(event.target.value)}
-              rows="5"
+              height="120px"
+              extensions={[octave]}
+              onChange={(value) => setCommand(value)}
+              className="cm-terminal"
             />
           </label>
           <div className="button-row">

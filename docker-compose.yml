@@ -42,7 +42,7 @@ services:
       CHROMIUM_PATH: /usr/bin/chromium
 
   react:
-    image: node:20
+    image: node:22
     container_name: webte2_react
     working_dir: /app
     volumes:
