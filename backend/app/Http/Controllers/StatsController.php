@@ -56,6 +56,27 @@ class StatsController extends Controller
         return response()->json(['ok' => true, 'counted' => true]);
     }
 
+    /** Returns paginated individual animation play records, excluding private fields. */
+    public function details(Request $request): JsonResponse
+    {
+        $validatedAnimation = $request->validate([
+            'animation' => 'sometimes|in:pendulum,ballbeam',
+            'per_page'  => 'sometimes|integer|min:1|max:200',
+        ]);
+
+        $perPage = (int) ($validatedAnimation['per_page'] ?? 50);
+
+        $query = DB::table('animation_stats')
+            ->select('id', 'animation', 'city', 'country', 'used_at')
+            ->orderBy('used_at', 'desc');
+
+        if (isset($validatedAnimation['animation'])) {
+            $query->where('animation', $validatedAnimation['animation']);
+        }
+
+        return response()->json($query->paginate($perPage));
+    }
+
     public function index(): JsonResponse
     {
         $execTotal = DB::table('request_logs')->count();

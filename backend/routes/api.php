@@ -27,6 +27,7 @@ Route::middleware('api.key')->group(function () {
 
     // Stats
     Route::post('/stats/record', [StatsController::class, 'record']);
+    Route::get('/stats/details', [StatsController::class, 'details']);
     Route::get('/stats', [StatsController::class, 'index']);
 
     // Docs
