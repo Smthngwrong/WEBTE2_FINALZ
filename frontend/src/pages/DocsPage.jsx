@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import SwaggerUI from 'swagger-ui-react'
 import 'swagger-ui-react/swagger-ui.css'
 import { PageTitle } from '../components/PageTitle'
-import { authHeaders, apiRequest } from '../lib/api'
+import { authHeaders } from '../lib/api'
 import { API_BASE_URL, API_TOKEN, TOKEN_KEY } from '../lib/constants'
 
 export function DocsPage() {
+  const { t } = useTranslation()
   const [downloading, setDownloading] = useState(false)
   const [error, setError] = useState('')
 
@@ -37,13 +39,13 @@ export function DocsPage() {
   return (
     <section className="workspace">
       <PageTitle
-        eyebrow="Dokumentacia"
-        title="API Dokumentacia"
-        text="REST API dokumentacia podla standardu OpenAPI 3.0."
+        eyebrow={t('docs.eyebrow')}
+        title={t('docs.title')}
+        text={t('docs.text')}
       />
       <div className="docs-actions">
         <button type="button" onClick={downloadPdf} disabled={downloading}>
-          {downloading ? 'Stahujem...' : 'Stiahnut PDF'}
+          {downloading ? t('docs.btn_downloading') : t('docs.btn_download')}
         </button>
       </div>
       {error && <p className="error-text">{error}</p>}

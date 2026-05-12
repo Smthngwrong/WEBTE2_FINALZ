@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CanvasScene } from '../components/CanvasScene'
 import { MetricList } from '../components/MetricList'
 import { NumberField } from '../components/NumberField'
@@ -7,6 +8,7 @@ import { SeriesChart } from '../components/SeriesChart'
 import { apiRequest } from '../lib/api'
 
 export function SimulationPage({ type }) {
+  const { t } = useTranslation()
   const isPendulum = type === 'pendulum'
   const [form, setForm] = useState(
     isPendulum
@@ -23,22 +25,22 @@ export function SimulationPage({ type }) {
 
   const config = isPendulum
     ? {
-        eyebrow: 'Simulacia',
-        title: 'Obratene kyvadlo',
-        text: 'API vracia cas, polohu vozika, uhol kyvadla a final_state pre pokracovanie.',
+        eyebrow: t('sim.eyebrow'),
+        title: t('sim.pendulum_title'),
+        text: t('sim.pendulum_text'),
         endpoint: '/simulate/pendulum',
         primary: 'angle',
         secondary: 'position',
-        labels: ['Uhol', 'Poloha'],
+        labels: [t('sim.chart_angle'), t('sim.chart_position')],
       }
     : {
-        eyebrow: 'Simulacia',
-        title: 'Gulicka na nosniku',
-        text: 'API vracia polohu gulicky, uhol nosnika a final_state pre dalsi beh.',
+        eyebrow: t('sim.eyebrow'),
+        title: t('sim.ballbeam_title'),
+        text: t('sim.ballbeam_text'),
         endpoint: '/simulate/ballbeam',
         primary: 'ball_position',
         secondary: 'beam_angle',
-        labels: ['Poloha gulicky', 'Uhol nosnika'],
+        labels: [t('sim.chart_ball_pos'), t('sim.chart_beam_angle')],
       }
 
   const maxFrame = Math.max((data?.t?.length ?? 1) - 1, 0)
@@ -121,13 +123,13 @@ export function SimulationPage({ type }) {
           {isPendulum ? (
             <>
               <NumberField
-                label="Pociatocny uhol"
+                label={t('sim.angle_label')}
                 value={form.angle0}
                 step="0.01"
                 onChange={(value) => updateField('angle0', value)}
               />
               <NumberField
-                label="Pociatocna rychlost"
+                label={t('sim.velocity_label')}
                 value={form.velocity0}
                 step="0.01"
                 onChange={(value) => updateField('velocity0', value)}
@@ -136,13 +138,13 @@ export function SimulationPage({ type }) {
           ) : (
             <>
               <NumberField
-                label="Pociatocna poloha gulicky"
+                label={t('sim.ball_pos_label')}
                 value={form.ball_position0}
                 step="0.01"
                 onChange={(value) => updateField('ball_position0', value)}
               />
               <NumberField
-                label="Pociatocny uhol nosnika"
+                label={t('sim.beam_angle_label')}
                 value={form.beam_angle0}
                 step="0.01"
                 onChange={(value) => updateField('beam_angle0', value)}
@@ -150,7 +152,7 @@ export function SimulationPage({ type }) {
             </>
           )}
           <NumberField
-            label="Trvanie"
+            label={t('sim.duration_label')}
             value={form.duration}
             min="1"
             step="1"
@@ -159,18 +161,18 @@ export function SimulationPage({ type }) {
 
           <div className="button-row">
             <button disabled={loading} type="button" onClick={() => runSimulation()}>
-              Spustit
+              {t('sim.btn_run')}
             </button>
             <button disabled={!data?.final_state || loading} type="button" onClick={continueSimulation}>
-              Pokracovat
+              {t('sim.btn_continue')}
             </button>
             <button disabled={!data} type="button" onClick={() => setPlaying((value) => !value)}>
-              {playing ? 'Pauza' : 'Play'}
+              {playing ? t('sim.btn_pause') : t('sim.btn_play')}
             </button>
           </div>
 
           <input
-            aria-label="Casova os animacie"
+            aria-label={t('sim.timeline_aria')}
             disabled={!data}
             max={maxFrame}
             min="0"

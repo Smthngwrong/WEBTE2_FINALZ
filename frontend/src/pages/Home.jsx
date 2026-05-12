@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 function FeatureCard({ title, text, onClick }) {
   return (
     <button className="feature-card" type="button" onClick={onClick}>
@@ -8,44 +10,43 @@ function FeatureCard({ title, text, onClick }) {
 }
 
 export function Home({ onNavigate }) {
+  const { t } = useTranslation()
+
   return (
     <section className="page-grid">
       <div className="intro-panel">
-        <p className="eyebrow">Frontend cast zadania</p>
-        <h1>Webove rozhranie pre Octave simulacie</h1>
-        <p>
-          Jedna aplikacia pre CAS terminal, spustanie fyzikalnych modelov,
-          synchronizovanu animaciu, grafy, statistiky a PDF dokumentaciu.
-        </p>
+        <p className="eyebrow">{t('home.eyebrow')}</p>
+        <h1>{t('home.title')}</h1>
+        <p>{t('home.text')}</p>
         <div className="quick-actions">
           <button type="button" onClick={() => onNavigate('/simulate/pendulum')}>
-            Spustit kyvadlo
+            {t('home.btn_pendulum')}
           </button>
           <button type="button" onClick={() => onNavigate('/terminal')}>
-            Otvorit terminal
+            {t('home.btn_terminal')}
           </button>
         </div>
       </div>
 
       <div className="feature-list">
         <FeatureCard
-          title="Inverted pendulum"
-          text="Parametre, request na API, canvas animacia a casovy graf uhla aj polohy."
+          title={t('home.card1_title')}
+          text={t('home.card1_text')}
           onClick={() => onNavigate('/simulate/pendulum')}
         />
         <FeatureCard
-          title="Ball on beam"
-          text="Samostatna vizualizacia gulicky, uhla nosnika a kontinuacny beh z final_state."
+          title={t('home.card2_title')}
+          text={t('home.card2_text')}
           onClick={() => onNavigate('/simulate/ballbeam')}
         />
         <FeatureCard
-          title="Octave terminal"
-          text="Perzistentna session, prikazy, vystupy stdout/stderr a ukoncenie session."
+          title={t('home.card3_title')}
+          text={t('home.card3_text')}
           onClick={() => onNavigate('/terminal')}
         />
         <FeatureCard
-          title="Monitoring"
-          text="Statistiky pouzivania a dokumentacia API pripravena na stiahnutie ako PDF."
+          title={t('home.card4_title')}
+          text={t('home.card4_text')}
           onClick={() => onNavigate('/stats')}
         />
       </div>

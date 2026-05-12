@@ -98,6 +98,19 @@ nav button.active,
   background: #0f766e;
 }
 
+.header-end {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-self: end;
+}
+
+.lang-toggle {
+  min-width: 44px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .status-pill {
   justify-self: end;
   min-width: 76px;
@@ -473,6 +486,49 @@ pre {
 .detail-table th {
   color: var(--text-muted);
   font-weight: 700;
+}
+
+.logs-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+.log-cmd,
+.log-error {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.status-badge {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #e2e8f0;
+  color: var(--text-strong);
+}
+
+.status-badge.success {
+  background: #dcfce7;
+  color: #14532d;
+}
+
+.status-badge.error {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.pagination-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
 }
 
 .endpoint-table {
