@@ -464,6 +464,67 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /stats/details:
+    get:
+      summary: Get paginated individual animation play records
+      operationId: getStatsDetails
+      parameters:
+        - name: animation
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [pendulum, ballbeam]
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: Paginated list of animation play events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        animation:
+                          type: string
+                          enum: [pendulum, ballbeam]
+                        city:
+                          type: string
+                          nullable: true
+                        country:
+                          type: string
+                          nullable: true
+                        used_at:
+                          type: string
+                          format: date-time
+                  current_page:
+                    type: integer
+                  last_page:
+                    type: integer
+                  total:
+                    type: integer
+                  per_page:
+                    type: integer
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /stats:
     get:
       summary: Get aggregated animation and execution statistics

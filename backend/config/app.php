@@ -25,6 +25,10 @@ return [
 
     'stats_cooldown_minutes' => (int) env('STATS_COOLDOWN_MINUTES', 10),
 
+    'octave_bridge_url' => env('OCTAVE_BRIDGE_URL', 'http://bridge:3001'),
+
+    'bridge_secret' => env('BRIDGE_SECRET', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

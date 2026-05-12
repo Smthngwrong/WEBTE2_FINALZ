@@ -12,8 +12,8 @@ class BridgeService
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(env('OCTAVE_BRIDGE_URL', 'http://bridge:3001'), '/');
-        $this->secret = env('BRIDGE_SECRET', '');
+        $this->baseUrl = rtrim(config('app.octave_bridge_url'), '/');
+        $this->secret = config('app.bridge_secret');
     }
 
     public function createSession(): string
