@@ -214,9 +214,9 @@ class SimulateController extends Controller
         N = -inv(C*inv(A-B*K)*B);
         sys = ss(A-B*K,B,C,D);
         t = (0:0.01:{$duration})';
-        [y,t,x] = lsim(N*sys,{$r}*ones(size(t)),t,{$x0});
+        [y,t,x] = lsim(sys,N*{$r}*ones(size(t)),t,{$x0});
         __t__ = t';
-        __y1__ = y(:,1)';
+        __y1__ = x(:,1)';
         __y2__ = x(:,3)';
         __fs__ = x(end,:);
         OCT;
