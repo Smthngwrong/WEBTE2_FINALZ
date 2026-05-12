@@ -22,3 +22,6 @@ octave-bridge/node_modules/
 Thumbs.db
 .idea/
 .vscode/
+
+# Claude Code
+.claude/
