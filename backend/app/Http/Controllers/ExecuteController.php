@@ -31,7 +31,7 @@ class ExecuteController extends Controller
         try {
             $result = $this->bridge->execute($validated['sessionId'], $validated['command']);
 
-            $slowdown = (int) env('SIMULATION_SLOWDOWN_MS', 0);
+            $slowdown = config('app.simulation_slowdown_ms');
             if ($slowdown > 0) {
                 usleep($slowdown * 1000);
             }

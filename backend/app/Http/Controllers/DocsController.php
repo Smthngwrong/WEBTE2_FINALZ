@@ -22,20 +22,18 @@ class DocsController extends Controller
 
     public function pdf(): Response
     {
-        $frontendUrl = rtrim(env('FRONTEND_URL', 'http://nginx:80'), '/');
-        $chromium    = env('CHROMIUM_PATH', '/usr/bin/chromium');
+        $frontendUrl = rtrim(config('app.frontend_url'), '/');
+        $chromium    = config('app.chromium_path');
+        $scriptPath  = base_path('scripts/generate-pdf.js');
         $outputPath  = storage_path('app/api-docs.pdf');
 
         $docsUrl = "{$frontendUrl}/docs";
 
-        $cmd = escapeshellcmd($chromium)
-            . ' --headless'
-            . ' --no-sandbox'
-            . ' --disable-gpu'
-            . ' --disable-dev-shm-usage'
-            . ' --print-to-pdf=' . escapeshellarg($outputPath)
-            . ' --print-to-pdf-no-header'
+        $cmd = 'node'
+            . ' ' . escapeshellarg($scriptPath)
             . ' ' . escapeshellarg($docsUrl)
+            . ' ' . escapeshellarg($outputPath)
+            . ' ' . escapeshellarg($chromium)
             . ' 2>&1';
 
         exec($cmd, $output, $exitCode);

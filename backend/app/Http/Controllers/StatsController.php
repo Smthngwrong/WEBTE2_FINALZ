@@ -19,7 +19,7 @@ class StatsController extends Controller
 
         $userToken = $request->header('X-User-Token');
         $ip = $request->ip();
-        $cooldown = (int) env('STATS_COOLDOWN_MINUTES', 10);
+        $cooldown = config('app.stats_cooldown_minutes');
 
         // Register token if new
         if ($userToken) {

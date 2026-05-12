@@ -17,6 +17,14 @@ return [
 
     'api_token' => env('API_TOKEN'),
 
+    'frontend_url' => env('FRONTEND_URL', 'http://nginx:80'),
+
+    'chromium_path' => env('CHROMIUM_PATH', '/usr/bin/chromium'),
+
+    'simulation_slowdown_ms' => (int) env('SIMULATION_SLOWDOWN_MS', 0),
+
+    'stats_cooldown_minutes' => (int) env('STATS_COOLDOWN_MINUTES', 10),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

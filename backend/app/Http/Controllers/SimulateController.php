@@ -106,7 +106,7 @@ class SimulateController extends Controller
                 $this->bridge->destroySession($sessionId);
             }
 
-            $slowdown = (int) env('SIMULATION_SLOWDOWN_MS', 0);
+            $slowdown = config('app.simulation_slowdown_ms');
             if ($slowdown > 0) {
                 usleep($slowdown * 1000);
             }
@@ -182,10 +182,10 @@ class SimulateController extends Controller
         sys = ss(Ac,B*N,C,D);
         t = (0:0.05:{$duration})';
         [y,t,x] = lsim(sys,{$r}*ones(size(t)),t,{$x0});
-        __t__ = t;
-        __y1__ = y(:,1);
-        __y2__ = y(:,2);
-        __fs__ = x(end,:)';
+        __t__ = t';
+        __y1__ = y(:,1)';
+        __y2__ = y(:,2)';
+        __fs__ = x(end,:);
         OCT;
     }
 
@@ -203,10 +203,10 @@ class SimulateController extends Controller
         sys = ss(A-B*K,B,C,D);
         t = (0:0.01:{$duration})';
         [y,t,x] = lsim(N*sys,{$r}*ones(size(t)),t,{$x0});
-        __t__ = t;
-        __y1__ = y(:,1);
-        __y2__ = x(:,3);
-        __fs__ = x(end,:)';
+        __t__ = t';
+        __y1__ = y(:,1)';
+        __y2__ = x(:,3)';
+        __fs__ = x(end,:);
         OCT;
     }
 
