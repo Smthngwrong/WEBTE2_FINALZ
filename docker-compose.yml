@@ -20,7 +20,7 @@ services:
     working_dir: /var/www/backend
     volumes:
       - ./backend:/var/www/backend
-    command: sh -c "composer install --no-interaction && php-fpm"
+    command: sh -c "composer install --no-interaction && npm install && php artisan migrate --force && php-fpm"
     depends_on:
       - db
     environment:
