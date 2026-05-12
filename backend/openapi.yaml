@@ -432,9 +432,9 @@ paths:
             schema:
               type: object
               required:
-                - simulation
+                - animation
               properties:
-                simulation:
+                animation:
                   type: string
                   enum:
                     - pendulum

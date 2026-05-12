@@ -16,6 +16,8 @@ const browser = await puppeteer.launch({
 const page = await browser.newPage();
 
 await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
+await page.waitForSelector('.swagger-ui .opblock', { timeout: 15000 }).catch(() => {});
+await page.emulateMediaType('print');
 
 await page.pdf({
     path: outputPath,

@@ -497,6 +497,37 @@ code {
   font-size: 13px;
 }
 
+.swagger-wrapper button,
+.swagger-wrapper input,
+.swagger-wrapper select,
+.swagger-wrapper textarea,
+.swagger-wrapper label,
+.swagger-wrapper code {
+  all: revert;
+}
+
+@media print {
+  .swagger-wrapper .try-out,
+  .swagger-wrapper .btn-group,
+  .swagger-wrapper .auth-wrapper,
+  .swagger-wrapper .download-url-wrapper,
+  .swagger-wrapper .topbar {
+    display: none !important;
+  }
+}
+
+@media print {
+  .topbar,
+  .docs-actions {
+    display: none !important;
+  }
+
+  main {
+    width: 100%;
+    padding: 0;
+  }
+}
+
 @media (max-width: 980px) {
   .topbar {
     grid-template-columns: 1fr;

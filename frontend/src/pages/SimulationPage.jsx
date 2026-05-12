@@ -87,6 +87,10 @@ export function SimulationPage({ type }) {
       setData(result)
       setFrame(0)
       setPlaying(true)
+      apiRequest('/stats/record', {
+        method: 'POST',
+        body: JSON.stringify({ animation: type }),
+      }).catch(() => {})
     } catch (err) {
       setError(err.message)
     } finally {
@@ -96,17 +100,7 @@ export function SimulationPage({ type }) {
 
   function continueSimulation() {
     if (!data?.final_state) return
-    const finalState = data.final_state
-    const nextForm = isPendulum
-      ? { ...form, angle0: finalState[0] ?? form.angle0, velocity0: finalState[1] ?? 0 }
-      : {
-          ...form,
-          ball_position0: finalState[0] ?? form.ball_position0,
-          beam_angle0: finalState[2] ?? form.beam_angle0,
-        }
-
-    setForm(nextForm)
-    runSimulation(nextForm)
+    runSimulation({ ...form, final_state: data.final_state })
   }
 
   const currentValues = useMemo(() => {
