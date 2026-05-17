@@ -9,6 +9,7 @@ if (!url || !outputPath || !executablePath) {
 
 const browser = await puppeteer.launch({
     executablePath,
+    env: { ...process.env, HOME: '/tmp' },
     args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
