@@ -9,7 +9,13 @@ if (!url || !outputPath || !executablePath) {
 
 const browser = await puppeteer.launch({
     executablePath,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--no-crashpad'],
+    args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--user-data-dir=/tmp/chromium-data',
+    ],
     headless: true,
 });
 
