@@ -391,11 +391,13 @@ pre {
   stroke-width: 3;
 }
 
-.series-primary {
+.series-primary path,
+path.series-primary {
   stroke: #0f766e;
 }
 
-.series-secondary {
+.series-secondary path,
+path.series-secondary {
   stroke: #f59e0b;
 }
 
@@ -410,8 +412,13 @@ pre {
   font-weight: 800;
 }
 
-.series-chart .secondary-label {
+.series-chart.series-secondary text {
   fill: #b45309;
+}
+
+.chart-stack {
+  display: grid;
+  gap: 10px;
 }
 
 .metric-list {
