@@ -1,0 +1,638 @@
+openapi: 3.0.3
+info:
+  title: WEBTE2 API
+  version: 1.0.0
+  description: REST API for the WEBTE2 university physics simulation platform.
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local development
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Human readable message
+
+    SimulationFinalState:
+      type: array
+      items:
+        type: number
+      minItems: 4
+      maxItems: 4
+
+paths:
+  /ping:
+    get:
+      summary: Health check
+      operationId: ping
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+
+  /session/create:
+    post:
+      summary: Create a new Octave session
+      operationId: createSession
+      responses:
+        '200':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+                    format: uuid
+                    example: 550e8400-e29b-41d4-a716-446655440000
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Bridge error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /session/{id}:
+    delete:
+      summary: Destroy an Octave session
+      operationId: destroySession
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Session destroyed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Session not found or already expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /execute:
+    post:
+      summary: Execute an Octave command in a session
+      operationId: executeCommand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - sessionId
+                - command
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                  example: 550e8400-e29b-41d4-a716-446655440000
+                command:
+                  type: string
+                  example: a = 1 + 1
+      responses:
+        '200':
+          description: Command executed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stdout:
+                    type: string
+                    example: "a = 2"
+                  stderr:
+                    type: string
+                    example: ""
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          description: Missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Bridge or server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /simulate/pendulum:
+    post:
+      summary: Run inverted pendulum simulation
+      operationId: simulatePendulum
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - angle0
+                - velocity0
+                - duration
+              properties:
+                angle0:
+                  type: number
+                  example: 0.1
+                velocity0:
+                  type: number
+                  example: 0
+                duration:
+                  type: number
+                  minimum: 1
+                  maximum: 30
+                  example: 10
+                final_state:
+                  $ref: '#/components/schemas/SimulationFinalState'
+                r:
+                  type: number
+                  example: 0.2
+      responses:
+        '200':
+          description: Simulation time-series data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  t:
+                    type: array
+                    items:
+                      type: number
+                    example: [0.0, 0.05, 0.1]
+                  angle:
+                    type: array
+                    items:
+                      type: number
+                    example: [0.1, 0.102, 0.104]
+                  position:
+                    type: array
+                    items:
+                      type: number
+                    example: [0.0, 0.001, 0.002]
+                  final_state:
+                    $ref: '#/components/schemas/SimulationFinalState'
+        '400':
+          description: Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Simulation or bridge error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /simulate/ballbeam:
+    post:
+      summary: Run ball-on-beam simulation
+      operationId: simulateBallbeam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ball_position0
+                - beam_angle0
+                - duration
+              properties:
+                ball_position0:
+                  type: number
+                  example: 0.1
+                beam_angle0:
+                  type: number
+                  example: 0
+                duration:
+                  type: number
+                  minimum: 1
+                  maximum: 30
+                  example: 10
+                final_state:
+                  $ref: '#/components/schemas/SimulationFinalState'
+                r:
+                  type: number
+                  example: 0.25
+      responses:
+        '200':
+          description: Simulation time-series data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  t:
+                    type: array
+                    items:
+                      type: number
+                    example: [0.0, 0.01, 0.02]
+                  ball_position:
+                    type: array
+                    items:
+                      type: number
+                    example: [0.1, 0.099, 0.098]
+                  beam_angle:
+                    type: array
+                    items:
+                      type: number
+                    example: [0.0, 0.001, 0.002]
+                  final_state:
+                    $ref: '#/components/schemas/SimulationFinalState'
+        '400':
+          description: Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Simulation or bridge error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /logs:
+    get:
+      summary: Paginated list of API request logs
+      operationId: getLogs
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: Paginated log entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        session_id:
+                          type: string
+                          nullable: true
+                        type:
+                          type: string
+                          example: execute
+                        command:
+                          type: string
+                          nullable: true
+                        params:
+                          type: string
+                          nullable: true
+                        status:
+                          type: string
+                          example: success
+                        error:
+                          type: string
+                          nullable: true
+                        ip:
+                          type: string
+                        city:
+                          type: string
+                          nullable: true
+                        country:
+                          type: string
+                          nullable: true
+                        created_at:
+                          type: string
+                          format: date-time
+                  current_page:
+                    type: integer
+                  last_page:
+                    type: integer
+                  total:
+                    type: integer
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /logs/export:
+    get:
+      summary: Export all request logs as CSV
+      operationId: exportLogs
+      responses:
+        '200':
+          description: CSV file download
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /stats/record:
+    post:
+      summary: Record an animation play event
+      operationId: recordStat
+      parameters:
+        - name: X-User-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - animation
+              properties:
+                animation:
+                  type: string
+                  enum:
+                    - pendulum
+                    - ballbeam
+                  example: pendulum
+      responses:
+        '200':
+          description: Stat recorded or skipped (cooldown active)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recorded:
+                    type: boolean
+                    example: true
+        '400':
+          description: Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /stats/details:
+    get:
+      summary: Get paginated individual animation play records
+      operationId: getStatsDetails
+      parameters:
+        - name: animation
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [pendulum, ballbeam]
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: Paginated list of animation play events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        animation:
+                          type: string
+                          enum: [pendulum, ballbeam]
+                        city:
+                          type: string
+                          nullable: true
+                        country:
+                          type: string
+                          nullable: true
+                        used_at:
+                          type: string
+                          format: date-time
+                  current_page:
+                    type: integer
+                  last_page:
+                    type: integer
+                  total:
+                    type: integer
+                  per_page:
+                    type: integer
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /stats:
+    get:
+      summary: Get aggregated animation and execution statistics
+      operationId: getStats
+      parameters:
+        - name: X-User-Token
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Aggregated statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executions:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 42
+                      by_country:
+                        type: object
+                        additionalProperties:
+                          type: integer
+                        example:
+                          SK: 10
+                          CZ: 5
+                  animations:
+                    type: object
+                    properties:
+                      pendulum:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                            example: 20
+                          by_country:
+                            type: object
+                            additionalProperties:
+                              type: integer
+                            example:
+                              SK: 8
+                              CZ: 4
+                      ballbeam:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                            example: 15
+                          by_country:
+                            type: object
+                            additionalProperties:
+                              type: integer
+                            example:
+                              SK: 6
+                              CZ: 3
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /openapi.yaml:
+    get:
+      summary: Download the OpenAPI specification
+      operationId: getOpenApiYaml
+      responses:
+        '200':
+          description: OpenAPI YAML document
+          content:
+            application/yaml:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /docs/pdf:
+    get:
+      summary: Download the API documentation as a PDF
+      operationId: getDocsPdf
+      responses:
+        '200':
+          description: PDF file download
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: PDF generation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

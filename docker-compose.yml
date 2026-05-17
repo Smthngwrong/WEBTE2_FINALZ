@@ -20,7 +20,7 @@ services:
     working_dir: /var/www/backend
     volumes:
       - ./backend:/var/www/backend
-    command: sh -c "composer install --no-interaction && php-fpm"
+    command: sh -c "composer install --no-interaction && npm install && php artisan migrate --force && php-fpm"
     depends_on:
       - db
     environment:
@@ -42,13 +42,15 @@ services:
       CHROMIUM_PATH: /usr/bin/chromium
 
   react:
-    image: node:20
+    image: node:22
     container_name: webte2_react
     working_dir: /app
     volumes:
       - ./frontend:/app
     ports:
       - "5173:5173"
+    environment:
+      VITE_API_PROXY_TARGET: http://nginx
     command: sh -c "npm install && npm run dev -- --host"
 
   bridge:
