@@ -9,7 +9,7 @@ if (!url || !outputPath || !executablePath) {
 
 const browser = await puppeteer.launch({
     executablePath,
-    args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--disable-crash-reporter'],
     headless: true,
 });
 
