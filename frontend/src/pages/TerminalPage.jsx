@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import CodeMirror from '@uiw/react-codemirror'
+import { octave } from '../lib/octaveLang'
 import { PageTitle } from '../components/PageTitle'
 import { apiRequest } from '../lib/api'
 import { examples } from '../lib/constants'
 
 export function TerminalPage() {
+  const { t } = useTranslation()
   const [sessionId, setSessionId] = useState('')
   const [command, setCommand] = useState('a = 1 + 1')
   const [entries, setEntries] = useState([])
@@ -16,7 +20,7 @@ export function TerminalPage() {
     try {
       const data = await apiRequest('/session/create', { method: 'POST' })
       setSessionId(data.sessionId)
-      setEntries([{ command: 'session created', stdout: data.sessionId, success: true }])
+      setEntries([{ command: t('terminal.session_created'), stdout: data.sessionId, success: true }])
     } catch (err) {
       setError(err.message)
     } finally {
@@ -31,7 +35,7 @@ export function TerminalPage() {
       .then((data) => {
         if (cancelled) return
         setSessionId(data.sessionId)
-        setEntries([{ command: 'session created', stdout: data.sessionId, success: true }])
+        setEntries([{ command: t('terminal.session_created'), stdout: data.sessionId, success: true }])
       })
       .catch((err) => {
         if (!cancelled) setError(err.message)
@@ -43,7 +47,7 @@ export function TerminalPage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function destroySession() {
     if (!sessionId) return
@@ -53,7 +57,7 @@ export function TerminalPage() {
       setSessionId('')
       setEntries((current) => [
         ...current,
-        { command: 'session destroyed', stdout: 'ok', success: true },
+        { command: t('terminal.session_destroyed'), stdout: 'ok', success: true },
       ])
     } catch (err) {
       setError(err.message)
@@ -85,34 +89,36 @@ export function TerminalPage() {
   return (
     <section className="workspace">
       <PageTitle
-        eyebrow="CAS terminal"
-        title="Perzistentna Octave session"
-        text="Premenne ostavaju v session medzi requestami, takze mozes skladat vypocty postupne."
+        eyebrow={t('terminal.eyebrow')}
+        title={t('terminal.title')}
+        text={t('terminal.text')}
       />
 
       <div className="terminal-layout">
         <form className="control-panel" onSubmit={executeCommand}>
           <label>
-            Session ID
+            {t('terminal.session_id')}
             <input readOnly value={sessionId || 'nevytvorena'} />
           </label>
-          <label>
-            Octave prikaz
-            <textarea
+          <label as="span">
+            {t('terminal.command')}
+            <CodeMirror
               value={command}
-              onChange={(event) => setCommand(event.target.value)}
-              rows="5"
+              height="120px"
+              extensions={[octave]}
+              onChange={(value) => setCommand(value)}
+              className="cm-terminal"
             />
           </label>
           <div className="button-row">
             <button disabled={loading || !sessionId} type="submit">
-              Spustit
+              {t('terminal.btn_run')}
             </button>
             <button disabled={loading} type="button" onClick={createSession}>
-              Nova session
+              {t('terminal.btn_new')}
             </button>
             <button disabled={loading || !sessionId} type="button" onClick={destroySession}>
-              Zrusit
+              {t('terminal.btn_destroy')}
             </button>
           </div>
           <div className="example-row">
@@ -126,7 +132,7 @@ export function TerminalPage() {
         </form>
 
         <div className="terminal-output" aria-live="polite">
-          {entries.length === 0 && <p className="muted">Zatial nie je ziadny vystup.</p>}
+          {entries.length === 0 && <p className="muted">{t('terminal.empty')}</p>}
           {entries.map((entry, index) => (
             <article key={`${entry.command}-${index}`}>
               <strong>&gt; {entry.command}</strong>

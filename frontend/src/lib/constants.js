@@ -4,12 +4,13 @@ export const TOKEN_KEY = 'webte2_api_token'
 export const USER_TOKEN_KEY = 'webte2_user_token'
 
 export const pages = [
-  { path: '/', label: 'Prehlad' },
-  { path: '/terminal', label: 'Octave terminal' },
-  { path: '/simulate/pendulum', label: 'Kyvadlo' },
-  { path: '/simulate/ballbeam', label: 'Gulicka' },
-  { path: '/stats', label: 'Statistiky' },
-  { path: '/docs', label: 'API docs' },
+  { path: '/', labelKey: 'nav.home' },
+  { path: '/terminal', labelKey: 'nav.terminal' },
+  { path: '/simulate/pendulum', labelKey: 'nav.pendulum' },
+  { path: '/simulate/ballbeam', labelKey: 'nav.ballbeam' },
+  { path: '/stats', labelKey: 'nav.stats' },
+  { path: '/docs', labelKey: 'nav.docs' },
+  { path: '/logs', labelKey: 'nav.logs' },
 ]
 
 export const examples = ['a = 1 + 1', 'x = [1 2 3]; sum(x)', 'sin(pi / 2)']

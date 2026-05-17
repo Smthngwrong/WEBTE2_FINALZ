@@ -98,6 +98,19 @@ nav button.active,
   background: #0f766e;
 }
 
+.header-end {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-self: end;
+}
+
+.lang-toggle {
+  min-width: 44px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .status-pill {
   justify-self: end;
   min-width: 76px;
@@ -378,11 +391,13 @@ pre {
   stroke-width: 3;
 }
 
-.series-primary {
+.series-primary path,
+path.series-primary {
   stroke: #0f766e;
 }
 
-.series-secondary {
+.series-secondary path,
+path.series-secondary {
   stroke: #f59e0b;
 }
 
@@ -397,8 +412,13 @@ pre {
   font-weight: 800;
 }
 
-.series-chart .secondary-label {
+.series-chart.series-secondary text {
   fill: #b45309;
+}
+
+.chart-stack {
+  display: grid;
+  gap: 10px;
 }
 
 .metric-list {
@@ -452,6 +472,72 @@ pre {
   margin: 4px 0;
 }
 
+.stat-details {
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.detail-table th,
+.detail-table td {
+  padding: 7px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.detail-table th {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.logs-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+.log-cmd,
+.log-error {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.status-badge {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #e2e8f0;
+  color: var(--text-strong);
+}
+
+.status-badge.success {
+  background: #dcfce7;
+  color: #14532d;
+}
+
+.status-badge.error {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.pagination-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+}
+
 .endpoint-table {
   display: grid;
   gap: 10px;
@@ -495,6 +581,54 @@ code {
   background: #e2e8f0;
   font-family: var(--mono);
   font-size: 13px;
+}
+
+.cm-terminal .cm-editor {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  font-family: var(--mono);
+  font-size: 14px;
+}
+
+.cm-terminal .cm-editor.cm-focused {
+  outline: 3px solid rgba(15, 118, 110, 0.22);
+  outline-offset: 2px;
+}
+
+.cm-terminal .cm-scroller {
+  border-radius: 8px;
+}
+
+.swagger-wrapper button,
+.swagger-wrapper input,
+.swagger-wrapper select,
+.swagger-wrapper textarea,
+.swagger-wrapper label,
+.swagger-wrapper code {
+  all: revert;
+}
+
+@media print {
+  .swagger-wrapper .try-out,
+  .swagger-wrapper .btn-group,
+  .swagger-wrapper .auth-wrapper,
+  .swagger-wrapper .download-url-wrapper,
+  .swagger-wrapper .topbar {
+    display: none !important;
+  }
+}
+
+@media print {
+  .topbar,
+  .docs-actions {
+    display: none !important;
+  }
+
+  main {
+    width: 100%;
+    padding: 0;
+  }
 }
 
 @media (max-width: 980px) {

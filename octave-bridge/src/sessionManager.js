@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const sessions = new Map();
 const TTL_MS = (parseInt(process.env.SESSION_TTL_MINUTES) || 30) * 60 * 1000;
-const OCTAVE_PROMPT = />> $/m;
+const OCTAVE_PROMPT = /octave:\d+> $/m;
 
 function createSession() {
   return new Promise((resolve, reject) => {
@@ -20,7 +20,13 @@ function createSession() {
         proc.stdout.removeListener('data', onInitialPrompt);
         sessions.set(id, { proc, lastActive: Date.now() });
         scheduleExpiry(id);
-        resolve(id);
+
+        // Load the control package so that lqr, lsim, ss, place are available.
+        // We do this once per session right after startup rather than requiring
+        // each caller to remember to load it.
+        executeCommand(id, 'pkg load control')
+          .then(() => resolve(id))
+          .catch(reject);
       }
     };
 
@@ -46,7 +52,7 @@ function executeCommand(id, command) {
       if (OCTAVE_PROMPT.test(stdout)) {
         session.proc.stdout.removeListener('data', onData);
         session.proc.stderr.removeListener('data', onErr);
-        const output = stdout.replace(OCTAVE_PROMPT, '').trim();
+        const output = stdout.replace(/octave:\d+> $/, '').trim();
         resolve({ stdout: output, stderr, success: true });
       }
     };

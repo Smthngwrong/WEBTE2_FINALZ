@@ -4,6 +4,7 @@ import { useRoute } from './hooks/useRoute'
 import { apiRequest, ensureLocalIdentity } from './lib/api'
 import { pages } from './lib/constants'
 import { DocsPage } from './pages/DocsPage'
+import { LogsPage } from './pages/LogsPage'
 import { Home } from './pages/Home'
 import { SimulationPage } from './pages/SimulationPage'
 import { StatsPage } from './pages/StatsPage'
@@ -33,6 +34,7 @@ function App() {
         {page === '/simulate/ballbeam' && <SimulationPage type="ballbeam" />}
         {page === '/stats' && <StatsPage />}
         {page === '/docs' && <DocsPage />}
+        {page === '/logs' && <LogsPage />}
       </main>
     </div>
   )
