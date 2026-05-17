@@ -21,6 +21,8 @@ services:
     volumes:
       - ./backend:/var/www/backend
     command: sh -c "composer install --no-interaction && npm install && php artisan migrate --force && php-fpm"
+    security_opt:
+      - seccomp:unconfined
     depends_on:
       db:
         condition: service_healthy
