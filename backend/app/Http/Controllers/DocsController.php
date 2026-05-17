@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class DocsController extends Controller
 {
-    public function yaml(): Response
+    public function yaml(): Response|JsonResponse
     {
         $path = base_path('openapi.yaml');
 
@@ -20,7 +21,7 @@ class DocsController extends Controller
         ]);
     }
 
-    public function pdf(): Response
+    public function pdf(): Response|JsonResponse
     {
         $frontendUrl = rtrim(config('app.frontend_url'), '/');
         $chromium    = config('app.chromium_path');
