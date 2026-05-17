@@ -22,7 +22,8 @@ services:
       - ./backend:/var/www/backend
     command: sh -c "composer install --no-interaction && npm install && php artisan migrate --force && php-fpm"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       APP_ENV: ${APP_ENV:-local}
       APP_KEY: ${APP_KEY}
@@ -77,6 +78,11 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     # Port not exposed on host — only reachable by other containers internally
 
   phpmyadmin:
