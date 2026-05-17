@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: true,
+    hmr: false,
     proxy: {
       '/api': {
         target: apiProxyTarget,
