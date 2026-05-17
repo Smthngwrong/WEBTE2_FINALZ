@@ -7,7 +7,7 @@ const apiProxyTarget = globalThis.process?.env?.VITE_API_PROXY_TARGET ?? 'http:/
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: 'all',
+    allowedHosts: true,
     proxy: {
       '/api': {
         target: apiProxyTarget,
