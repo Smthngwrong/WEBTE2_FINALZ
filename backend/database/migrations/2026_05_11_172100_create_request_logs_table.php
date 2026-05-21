@@ -19,7 +19,7 @@ return new class extends Migration
             $table->json('params')->nullable();
             $table->enum('status', ['success', 'error']);
             $table->text('error')->nullable();
-            $table->string('ip', 45)->nullable();
+            $table->string('ip', 64)->nullable();
             $table->string('city')->nullable();
             $table->string('country')->nullable();
             $table->timestamp('created_at')->useCurrent();

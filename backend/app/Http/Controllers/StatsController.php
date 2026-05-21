@@ -19,6 +19,7 @@ class StatsController extends Controller
 
         $userToken = $request->header('X-User-Token');
         $ip = $request->ip();
+        $ipHash = hash('sha256', $ip);
         $cooldown = config('app.stats_cooldown_minutes');
 
         // Register token if new
@@ -47,7 +48,7 @@ class StatsController extends Controller
         DB::table('animation_stats')->insert([
             'animation'  => $v['animation'],
             'user_token' => $userToken,
-            'ip'         => $ip,
+            'ip'         => $ipHash,
             'city'       => $geo['city'],
             'country'    => $geo['country'],
             'used_at'    => now(),

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('animation', ['pendulum', 'ballbeam']);
             $table->string('user_token', 36)->nullable();
-            $table->string('ip', 45)->nullable();
+            $table->string('ip', 64)->nullable();
             $table->string('city')->nullable();
             $table->string('country')->nullable();
             $table->timestamp('used_at')->useCurrent();

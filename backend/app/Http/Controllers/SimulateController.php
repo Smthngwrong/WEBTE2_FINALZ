@@ -92,6 +92,7 @@ class SimulateController extends Controller
         callable $reshape,
     ): JsonResponse {
         $ip = $request->ip();
+        $ipHash = hash('sha256', $ip);
         $status = 'success';
         $error = null;
         $result = null;
@@ -124,7 +125,7 @@ class SimulateController extends Controller
             'params'     => json_encode($params),
             'status'     => $status,
             'error'      => $error,
-            'ip'         => $ip,
+            'ip'         => $ipHash,
             'city'       => $geo['city'],
             'country'    => $geo['country'],
             'created_at' => now(),

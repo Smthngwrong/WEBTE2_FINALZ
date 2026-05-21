@@ -24,6 +24,7 @@ class ExecuteController extends Controller
         ]);
 
         $ip = $request->ip();
+        $ipHash = hash('sha256', $ip);
         $status = 'success';
         $error = null;
         $result = null;
@@ -50,7 +51,7 @@ class ExecuteController extends Controller
             'params'     => null,
             'status'     => $status,
             'error'      => $error,
-            'ip'         => $ip,
+            'ip'         => $ipHash,
             'city'       => $geo['city'],
             'country'    => $geo['country'],
             'created_at' => now(),
